@@ -19,11 +19,12 @@ func NewObjectHunter(endpoint string) *ObjectHunter {
 }
 
 func (receiver *ObjectHunter) ListKeys(next string, filter *HunterFilter) []string {
-	temp, err := receiver.do(next)
+	temp, err := receiver.do(next, filter.parameters)
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
+
 	var result []string
 
 	if filter.listHandle(*temp) {
@@ -37,8 +38,8 @@ func (receiver *ObjectHunter) ListKeys(next string, filter *HunterFilter) []stri
 	return result
 }
 
-func (receiver *ObjectHunter) do(next string) (*oss.ListObjectsResultV2, error) {
-	url := receiver.endpoint + "?list-type=2&max-keys=1000"
+func (receiver *ObjectHunter) do(next, parameters string) (*oss.ListObjectsResultV2, error) {
+	url := receiver.endpoint + "?list-type=2" + parameters
 	if next != "" {
 		url += "&continuation-token=" + next
 	}
